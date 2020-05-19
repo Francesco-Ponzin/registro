@@ -86,12 +86,16 @@ public class UserServlet extends HttpServlet {
 						salt, sha256(salt + request.getParameter("password")));
 				users = UserDAO.getListFromDB();
 				session.setAttribute("users", users);
+				List<User> teachers = UserDAO.getTeachersListFromDB();
+				session.setAttribute("teachers", teachers);
 				break;
 			case "delete":
 
 				UserDAO.deleteFromDb(request.getParameter("email"));
 				users = UserDAO.getListFromDB();
 				session.setAttribute("users", users);
+				teachers = UserDAO.getTeachersListFromDB();
+				session.setAttribute("teachers", teachers);
 				break;
 			default:
 				break;

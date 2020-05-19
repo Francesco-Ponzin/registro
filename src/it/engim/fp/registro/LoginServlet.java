@@ -2,10 +2,12 @@ package it.engim.fp.registro;
 
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -68,10 +70,10 @@ public class LoginServlet extends HttpServlet {
 				stmt.setString(1, email);
 				ResultSet rs = stmt.executeQuery();
 
-				if (rs.next()) { 			//TODO error handling
+				if (rs.next()) { // TODO error handling
 
-
-					if (sha256(rs.getString("salt") + password).equals(rs.getString("passwordhash"))) { 			//TODO error handling
+					if (sha256(rs.getString("salt") + password).equals(rs.getString("passwordhash"))) { // TODO error
+																										// handling
 
 						User user = UserDAO.newUser(email);
 
@@ -85,24 +87,34 @@ public class LoginServlet extends HttpServlet {
 							response.addCookie(userCookie);
 						}
 
+						//setup session
+						
 						session.setAttribute("user", user);
 						List<User> teachers = UserDAO.getTeachersListFromDB();
 						session.setAttribute("teachers", teachers);
-						List<Class> classes = ClassDAO.getListFromDB();
-						session.setAttribute("classes", classes);
-						
-						
+						List<Course> courses = CourseDAO.getListFromDB();
+						session.setAttribute("courses", courses);
+
 						switch (user.getRole()) {
 						case ADMIN:
 							List<User> users = UserDAO.getListFromDB();
 							session.setAttribute("users", users);
 
 							break;
+						case TEACHER:
+							List<Course> teachedCourses = CourseDAO.getTeacherCoursesFromDB(user.getId());
+							session.setAttribute("teachedCourses", teachedCourses);
+							break;
+						case STUDENT:
 
-						default: //TODO error handling
+							List<Vote> myVotes = VoteDAO.getStudentVotesFromDB(user.getId());
+							session.setAttribute("myVotes", myVotes);
+
+						default: // TODO error handling
 							break;
 						}
-					
+
+						//end setup session
 					}
 
 				}
@@ -123,6 +135,60 @@ public class LoginServlet extends HttpServlet {
 			HttpSession session = request.getSession();
 			session.invalidate();
 			response.sendRedirect("index.jsp");
+			break;
+
+		case "change":
+
+			try {
+
+				session = request.getSession();
+				if (request.getParameter("JSESSIONID") != null) {
+					Cookie userCookie = new Cookie("JSESSIONID", request.getParameter("JSESSIONID"));
+					response.addCookie(userCookie);
+				} else {
+					String sessionId = session.getId();
+					Cookie userCookie = new Cookie("JSESSIONID", sessionId);
+					response.addCookie(userCookie);
+				}
+
+				User user = (User) session.getAttribute("user");
+
+				String email = user.getEmail();
+				String password = request.getParameter("password");
+
+				Connection con = DBconnect.getConnection();
+				PreparedStatement stmt = con.prepareStatement("select * from users where email=?");
+
+				stmt.setString(1, email);
+				ResultSet rs = stmt.executeQuery();
+
+				if (rs.next()) { // TODO error handling
+
+					if (request.getParameter("newpassword").equals(request.getParameter("newpassword2"))
+							&& sha256(rs.getString("salt") + password).equals(rs.getString("passwordhash"))) { // TODO
+																												// error
+																												// handling
+
+						Random RANDOM = new SecureRandom();
+						String salt = Integer.toString(RANDOM.nextInt());
+						UserDAO.updatePassword(user, salt, sha256(salt + request.getParameter("newpassword")));
+
+					} else {
+						response.sendRedirect("profile.jsp");
+						return;
+
+					}
+
+				}
+
+			}
+
+			catch (Throwable theException) {
+				System.out.println(theException);
+			}
+
+			response.sendRedirect("index.jsp");
+
 			break;
 
 		default:

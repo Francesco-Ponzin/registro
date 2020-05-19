@@ -12,16 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class ClassServlet
+ * Servlet implementation course ClassServlet
  */
-@WebServlet("/ClassServlet")
-public class ClassServlet extends HttpServlet {
+@WebServlet("/CourseServlet")
+public class CourseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public ClassServlet() {
+	public CourseServlet() {
 		super();
 	}
 
@@ -46,7 +46,7 @@ public class ClassServlet extends HttpServlet {
 		
 		
 		try {
-			List<Class> classes;
+			List<Course> courses;
 
 			switch (request.getParameter("action")) {
 			case "create":
@@ -57,11 +57,11 @@ public class ClassServlet extends HttpServlet {
 					return;
 				}
 
-				ClassDAO.insertToDB(
-						ClassDAO.newClass(request.getParameter("name"), request.getParameter("description"), Integer.parseInt(request.getParameter("CFU")), UserDAO.newUser(Integer.parseInt(request.getParameter("teacher")))));
+				CourseDAO.insertToDB(
+						CourseDAO.newCourse(request.getParameter("name"), request.getParameter("description"), Integer.parseInt(request.getParameter("CFU")), UserDAO.newUser(Integer.parseInt(request.getParameter("teacher")))));
 
-				classes = ClassDAO.getListFromDB();
-				session.setAttribute("classes", classes);
+				courses = CourseDAO.getListFromDB();
+				session.setAttribute("courses", courses);
 				break;
 			case "delete":
 				
@@ -71,9 +71,9 @@ public class ClassServlet extends HttpServlet {
 					return;
 				}
 
-				ClassDAO.deleteFromDb(Integer.parseInt(request.getParameter("id")));
-				classes = ClassDAO.getListFromDB();
-				session.setAttribute("classes", classes);
+				CourseDAO.deleteFromDb(Integer.parseInt(request.getParameter("id")));
+				courses = CourseDAO.getListFromDB();
+				session.setAttribute("courses", courses);
 				break;
 			default:
 				break;
@@ -82,10 +82,9 @@ public class ClassServlet extends HttpServlet {
 		} catch (Exception theException) {
 			System.out.println(theException);
 		} finally {
-			response.sendRedirect("index.jsp");
 		}
 
-	
+		response.sendRedirect("index.jsp");
 	}
 
 }

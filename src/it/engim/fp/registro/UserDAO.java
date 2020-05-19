@@ -74,6 +74,7 @@ public class UserDAO {
 			ResultSet rs = stmt.executeQuery();
 			newUser.setEmail(email);
 			rs.next();
+			newUser.setId(rs.getInt("ID"));
 			newUser.setFirstName(rs.getString("firstname"));
 			newUser.setLastName(rs.getString("lastname"));
 			newUser.setRole(toRole(rs.getString("userrole")));
@@ -134,6 +135,33 @@ public class UserDAO {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public static void updatePassword(User user, String salt, String passwordhash) {
+	
+		try {
+
+			Connection currentCon = DBconnect.getConnection();
+
+			PreparedStatement stmt = currentCon
+					.prepareStatement("UPDATE users SET passwordhash = ?, salt= ? WHERE email = ? ");
+			
+			
+			
+			stmt.setString(1, passwordhash);
+			stmt.setString(2, salt);
+			stmt.setString(3, user.getEmail());
+
+
+			stmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	
 
 	public static void deleteFromDb(String email) {
 		try {

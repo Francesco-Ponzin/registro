@@ -7,20 +7,20 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ClassDAO {
-	public static Class newClass(int id, String name, String description, int cfu, User teacher) {
+public class CourseDAO {
+	public static Course newCourse(int id, String name, String description, int cfu, User teacher) {
 		if (teacher.getRole() == UserRole.TEACHER) {
-			Class newClass = newClass(name, description, cfu, teacher);
+			Course newClass = newCourse(name, description, cfu, teacher);
 			newClass.setId(id);
 			return newClass;
 		}
 		return null;
 	}
 
-	public static Class newClass(String name, String description, int cfu, User teacher) {
+	public static Course newCourse(String name, String description, int cfu, User teacher) {
 
 		if (teacher.getRole() == UserRole.TEACHER) {
-			Class newClass = new Class();
+			Course newClass = new Course();
 			newClass.setName(name);
 			newClass.setDescription(description);
 			newClass.setCfu(cfu);
@@ -32,14 +32,14 @@ public class ClassDAO {
 
 	}
 
-	public static Class newClass(int id) {
+	public static Course newCourse(int id) {
 
-		Class newClass = new Class();
+		Course newClass = new Course();
 
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
-			PreparedStatement stmt = currentCon.prepareStatement("SELECT * FROM class WHERE id = ?");
+			PreparedStatement stmt = currentCon.prepareStatement("SELECT * FROM courses WHERE id = ?");
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 			newClass.setId(id);
@@ -48,7 +48,7 @@ public class ClassDAO {
 
 			newClass.setDescription(rs.getString("description"));
 			newClass.setCfu(rs.getInt("CFU"));
-			newClass.setTeacher(UserDAO.newUser(id));
+			newClass.setTeacher(UserDAO.newUser(rs.getInt("teacher")));
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -57,13 +57,13 @@ public class ClassDAO {
 
 	}
 
-	public static void insertToDB(Class toinsert) {
+	public static void insertToDB(Course toinsert) {
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
 
 			PreparedStatement stmt = currentCon
-					.prepareStatement("INSERT INTO classes (name, description, CFU, teacher) VALUES(?,?,?,?)");
+					.prepareStatement("INSERT INTO courses (name, description, CFU, teacher) VALUES(?,?,?,?)");
 
 			stmt.setString(1, toinsert.getName());
 			stmt.setString(2, toinsert.getDescription());
@@ -82,7 +82,7 @@ public class ClassDAO {
 
 			Connection currentCon = DBconnect.getConnection();
 
-			PreparedStatement stmt = currentCon.prepareStatement("DELETE FROM classes WHERE id = ?");
+			PreparedStatement stmt = currentCon.prepareStatement("DELETE FROM courses WHERE id = ?");
 			stmt.setInt(1, id);
 			stmt.executeUpdate();
 
@@ -91,20 +91,20 @@ public class ClassDAO {
 		}
 	}
 
-	public static List<Class> getListFromDB() {
-		LinkedList<Class> list = new LinkedList<Class>();
+	public static List<Course> getListFromDB() {
+		LinkedList<Course> list = new LinkedList<Course>();
 
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
 
-			PreparedStatement stmt = currentCon.prepareStatement("SELECT * FROM classes");
+			PreparedStatement stmt = currentCon.prepareStatement("SELECT * FROM courses");
 
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
 
-				list.add(ClassDAO.newClass(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getInt("cfu"), UserDAO.newUser(rs.getInt("teacher"))));
+				list.add(CourseDAO.newCourse(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getInt("cfu"), UserDAO.newUser(rs.getInt("teacher"))));
 			}
 
 		} catch (SQLException e) {
@@ -116,20 +116,23 @@ public class ClassDAO {
 	}
 	
 	
-	public static List<Class> getTeacherClassesFromDB(int teacherId) {
-		LinkedList<Class> list = new LinkedList<Class>();
+	public static List<Course> getTeacherCoursesFromDB(int teacherId) {
+		LinkedList<Course> list = new LinkedList<Course>();
 
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
 
-			PreparedStatement stmt = currentCon.prepareStatement("SELECT * FROM classes WHERE teacher = ?");
+			PreparedStatement stmt = currentCon.prepareStatement("SELECT * FROM courses WHERE teacher = ?");
 			stmt.setInt(1, teacherId);
 
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				list.add(ClassDAO.newClass(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getInt("cfu"), UserDAO.newUser(rs.getInt("teacher"))));
+				
+				Course newCourse = CourseDAO.newCourse(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getInt("cfu"), UserDAO.newUser(rs.getInt("teacher")));
+				newCourse.setVotes(VoteDAO.getCourseVotesFromDB(newCourse.getId())); 
+				list.add(newCourse);
 			}
 
 		} catch (SQLException e) {

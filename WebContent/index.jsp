@@ -4,17 +4,19 @@
 
 
 <%
-	User user = (User) session.getAttribute("user");
+User user = (User) session.getAttribute("user");
 List<User> users = (List<User>) session.getAttribute("users");
 List<User> teachers = (List<User>) session.getAttribute("teachers");
-List<it.engim.fp.registro.Class> classes = (List<it.engim.fp.registro.Class>) session.getAttribute("classes");
+List<Course> courses = (List<Course>) session.getAttribute("courses");
+List<Vote> myVotes = (List<Vote>) session.getAttribute("myVotes");
+List<Course> teachedCourses = (List<Course>) session.getAttribute("teachedCourses");
 %>
 
 
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Registro Elettronico</title>
 </head>
 <body>
 
@@ -23,7 +25,7 @@ List<it.engim.fp.registro.Class> classes = (List<it.engim.fp.registro.Class>) se
 	%>
 
 	<h2>Login</h2>
-	<form action="LoginServlet" method="POST">
+	<form action="LoginServlet" method="POST" class="login">
 		Inserisci email <input type="email" name="email"><br>
 		Inserisci password <input type="password" name="password"> <input
 			type="hidden" name="action" value="login"> <input
@@ -44,7 +46,9 @@ List<it.engim.fp.registro.Class> classes = (List<it.engim.fp.registro.Class>) se
 	</h2>
 	<%=user.getRole()%>
 
-	<form action="LoginServlet" method="POST">
+	<a href="profile.jsp"><button>cambia password</button></a>
+
+	<form action="LoginServlet" method="POST" class="logout">
 		<input type="hidden" name="action" value="logout"> <input
 			type="submit" value="logout">
 
@@ -93,23 +97,23 @@ List<it.engim.fp.registro.Class> classes = (List<it.engim.fp.registro.Class>) se
 		%>
 
 
-		<tr>
-			<form action="UserServlet" method="POST">
-				<td><input type="text" name="firstname"></td>
-				<td><input type="text" name="lastname"></td>
-				<td><input type="email" name="email"></td>
-				<td><select name="role">
-						<option value="ADMIN">Admin</option>
-						<option value="STUDENT">Student</option>
-						<option value="TEACHER">Teacher</option>
 
-				</select></td> <input type="hidden" name="password" value="password">
-				<td><input type="hidden" name="action" value="create">
-					<input type="submit" value="insert"></td>
-			</form>
-		</tr>
 
 	</table>
+	<div>
+		<form action="UserServlet" method="POST">
+			<input type="text" name="firstname"> <input type="text"
+				name="lastname"> <input type="email" name="email"> <select
+				name="role">
+				<option value="ADMIN">Admin</option>
+				<option value="STUDENT">Student</option>
+				<option value="TEACHER">Teacher</option>
+
+			</select> <input type="hidden" name="password" value="cambiami"> <input
+				type="hidden" name="action" value="create"> <input
+				type="submit" value="insert">
+		</form>
+	</div>
 
 	<table>
 
@@ -123,7 +127,7 @@ List<it.engim.fp.registro.Class> classes = (List<it.engim.fp.registro.Class>) se
 		</tr>
 
 		<%
-			for (it.engim.fp.registro.Class c : classes) {
+			for (Course c : courses) {
 		%>
 		<tr>
 
@@ -132,7 +136,7 @@ List<it.engim.fp.registro.Class> classes = (List<it.engim.fp.registro.Class>) se
 			<td><%=c.getCfu()%></td>
 			<td><%=c.getTeacher().getFirstName() + " " + c.getTeacher().getLastName()%></td>
 			<td>
-				<form action="ClassServlet" method="POST">
+				<form action="CourseServlet" method="POST">
 					<input type="hidden" name="action" value="delete"> <input
 						type="hidden" name="id" value="<%=c.getId()%>"> <input
 						type="submit" value="delete">
@@ -147,39 +151,210 @@ List<it.engim.fp.registro.Class> classes = (List<it.engim.fp.registro.Class>) se
 		%>
 
 
-		<tr>
-			<form action="ClassServlet" method="POST">
-				<td><input type="text" name="name"></td>
-				<td><input type="text" name="description"></td>
-				<td><input type="number" name="CFU" max="30" min="1" value="5"></td>
-				<td><select name="teacher">
-						<%
-							for (User u : teachers) {
-						%>
-						<option value="<%= u.getId() %>"><%= u.getEmail() %>+<%=u.getFirstName() + " " + u.getLastName()%></option>
-						<%
-							}
-						%>
 
-				</select></td> <input type="hidden" name="password" value="password">
-				<td><input type="hidden" name="action" value="create">
-					<input type="submit" value="insert"></td>
-			</form>
-		</tr>
 
 	</table>
 
+	<div>
+		<form action="CourseServlet" method="POST">
+			<input type="text" name="name"> <input type="text"
+				name="description"> <input type="number" name="CFU" max="30"
+				min="1" value="5"> <select name="teacher">
+				<%
+					for (User u : teachers) {
+				%>
+				<option value="<%=u.getId()%>"><%=u.getEmail()%>+<%=u.getFirstName() + " " + u.getLastName()%></option>
+				<%
+					}
+				%>
 
+			</select> <input type="hidden" name="action" value="create"> <input
+				type="submit" value="insert">
+		</form>
+	</div>
 
 
 
 
 
 	<%
-		} // admin logged end
+		} else if (user.getRole() == UserRole.TEACHER) {// admin logged end
 	%>
 
+	<h2>I miei corsi:</h2>
 
+	<ul>
+
+
+		<%
+			for (Course c : teachedCourses) {
+		%>
+		<li>
+			<h3><%=c.getName()%></h3>
+			<p>
+				<%=c.getDescription()%></p>
+			<p>
+				CFU:
+				<%=c.getCfu()%></p>
+			<table>
+
+				<%
+					for (Vote v : c.getVotes()) {
+				%>
+				<tr>
+					<td><%=v.getStudent().getFirstName() + " " + v.getStudent().getLastName()%></td>
+					<td>
+						<%
+							if (v.getStatus() == VoteStatus.VOID) {
+						%> N.A. <%
+							} else {
+						%> <%=v.getVote()%> <%
+ 	}
+ %>
+
+
+					</td>
+					<td>
+						<%
+							if (v.getStatus() == VoteStatus.VOID || v.getStatus() == VoteStatus.DECLINED) {
+						%>
+						<form action="VoteServlet" method="POST">
+							<input type="hidden" name="action" value="assign"> <input
+								type="number" name="assigned" value="18"> <input
+								type="hidden" name="vote" value="<%=v.getId()%>"> <input
+								type="submit" value="Assegna">
+						</form>
+						<%
+							}
+						%>
+					</td>
+
+
+
+
+				</tr>
+
+				<%
+					}
+				%>
+			</table>
+
+
+
+		</li>
+
+
+
+
+		<%
+			}
+		%>
+	</ul>
+	<%
+		} else if (user.getRole() == UserRole.STUDENT) {// teacher logged end
+	%>
+
+	<table>
+
+
+		<tr>
+			<th>Nome</th>
+			<th>Descrizione</th>
+			<th>CFU</th>
+			<th>Professore</th>
+			<th></th>
+		</tr>
+
+		<%
+			for (Course c : courses) {
+		%>
+		<tr>
+
+			<td><%=c.getName()%></td>
+			<td><%=c.getName()%></td>
+			<td><%=c.getDescription()%></td>
+			<td><%=c.getCfu()%></td>
+			<td><%=c.getTeacher().getFirstName() + " " + c.getTeacher().getLastName()%></td>
+			<td>
+				<form action="VoteServlet" method="POST">
+					<input type="hidden" name="action" value="subscribe"> <input
+						type="hidden" name="course" value="<%=c.getId()%>"> <input
+						type="submit" value="Iscriviti">
+				</form>
+			</td>
+		</tr>
+
+		<%
+			}
+		%>
+
+
+
+	</table>
+
+
+	<table>
+
+		<%
+			for (Vote v : myVotes) {
+		%>
+		<tr>
+			<td><%=v.getCourse().getName()%></td>
+			<td><%=v.getCourse().getTeacher().getLastName()%></td>
+			<td>
+				<%
+					if (v.getStatus() == VoteStatus.VOID) {
+				%> N.A. <%
+					} else {
+				%> <%=v.getVote()%> <%
+ 	}
+ %>
+
+
+			</td>
+			<td>
+				<%
+					if (v.getStatus() == VoteStatus.ASSIGNED) {
+				%> 				<form action="VoteServlet" method="POST">
+					<input type="hidden" name="action" value="accept"> <input
+						type="hidden" name="vote" value="<%=v.getId()%>">
+					<input type="submit" value="accetta">
+				</form> 
+
+<form action="VoteServlet" method="POST">
+					<input type="hidden" name="action" value="decline"> <input
+						type="hidden" name="vote" value="<%=v.getId()%>">
+					<input type="submit" value="rifiuta">
+				</form> 
+
+ <%
+					} else if (v.getStatus() == VoteStatus.VOID) {
+				%> <td>
+				<form action="VoteServlet" method="POST">
+					<input type="hidden" name="action" value="resign"> <input
+						type="hidden" name="vote" value="<%=v.getCourse().getId()%>">
+					<input type="submit" value="Ritirati">
+				</form>
+			</td> <%
+ 	}
+ %>
+			</td>
+			
+
+
+
+
+		</tr>
+
+		<%
+			}
+		%>
+	</table>
+
+
+	<%
+		} // student logged end
+	%>
 
 	<%
 		} //all logged end

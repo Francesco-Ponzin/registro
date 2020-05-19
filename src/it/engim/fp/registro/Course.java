@@ -1,12 +1,15 @@
 package it.engim.fp.registro;
 
-public class Class {
+import java.util.List;
+
+public class Course {
 
 	private int id;
 	private String name;
 	private String description;
 	private int cfu;
 	private User teacher;
+	private List<Vote> votes;
 	
 	
 	
@@ -40,6 +43,12 @@ public class Class {
 	}
 	public void setTeacher(User teacher) {
 		this.teacher = teacher;
+	}
+	public List<Vote> getVotes() {
+		return votes;
+	}
+	public void setVotes(List<Vote> votes) {
+		this.votes = votes;
 	}
 	
 	

@@ -1,5 +1,3 @@
-drop table users;
-
 CREATE TABLE users (
     ID int PRIMARY KEY AUTO_INCREMENT,
     email varchar(255) UNIQUE,
@@ -11,10 +9,7 @@ CREATE TABLE users (
 	
 );
 
-INSERT INTO users (email, firstname, lastname, passwordhash, salt, userrole)
-VALUES
-("finta@finto.finto","cambiami", "subito", "e7828842daefa995120b53a0a6b51b332ba8e57a0a9f8f59825291da68e0b0e2", "1434736222", "ADMIN")
-;
+
 
 
 CREATE TABLE courses (
@@ -39,6 +34,12 @@ CREATE TABLE votes (
 
 );
 
+
+
+INSERT INTO users (email, firstname, lastname, passwordhash, salt, userrole)
+VALUES
+("finta@finto.finto","cambiami", "subito", "e7828842daefa995120b53a0a6b51b332ba8e57a0a9f8f59825291da68e0b0e2", "1434736222", "ADMIN")
+;
 
 
 INSERT INTO users (email, firstname, lastname, passwordhash, salt, userrole)

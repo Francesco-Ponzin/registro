@@ -15,11 +15,18 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
 
 
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Registro Elettronico</title>
+	<meta charset="UTF-8">
+	<title>Registro Elettronico</title>
+	<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
+	<header>
+		<h1>Engim - Tecnico di Sviluppo Software</h1>
+	</header>
 	<%
 		if (errorMessage != null) {
 	%>
@@ -32,188 +39,193 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
 	<%
 		if (user == null) {
 	%>
+	<div class="login">
+		<h2>Login</h2>
+		<form action="LoginServlet" method="POST" class="login">
+			<label for="email">Inserisci email</label> <input type="email" name="email"><br>
+			<label for="password">Inserisci password</label> <input type="password" name="password"> <input
+				type="hidden" name="action" value="login">
+			<input type="submit" value="submit">
 
-	<h2>Login</h2>
-	<form action="LoginServlet" method="POST" class="login">
-		Inserisci email <input type="email" name="email"><br>
-		Inserisci password <input type="password" name="password"> <input
-			type="hidden" name="action" value="login"> <input
-			type="submit" value="submit">
-
-	</form>
-
+		</form>
+	</div>
 
 
 	<%
 		} else {
 	%>
 
-	<h2>
-		Benvenuto
-		<%=user.getFirstName() + " " + user.getLastName()%>
+	<div class="welcome">
+		<h2>
+			Welcome
+			<%=user.getFirstName() + " " + user.getLastName()%>
 
-	</h2>
-	<%=user.getRole()%>
-
-	<a href="profile.jsp"><button>cambia password</button></a>
-
-	<form action="LoginServlet" method="POST" class="logout">
-		<input type="hidden" name="action" value="logout"> <input
-			type="submit" value="logout">
-
-	</form>
+		</h2>
 
 
+		<form action="LoginServlet" method="POST" class="logout">
+			<a href="profile.jsp">profilo</a>
+			<input type="hidden" name="action" value="logout"> <input type="submit" value="logout">
+		</form>
+
+	</div>
 
 	<%
 		if (user.getRole() == UserRole.ADMIN) {
 	%>
 
+	<h2>Elenco utenti</h2>
+	<div class="table">
+		<table>
 
-	<table>
 
+			<tr>
+				<th>Nome</th>
+				<th>Cognome</th>
+				<th>Email</th>
+				<th>Ruolo</th>
+				<th></th>
+			</tr>
 
-		<tr>
-			<th>Nome</th>
-			<th>Cognome</th>
-			<th>Email</th>
-			<th>Ruolo</th>
-			<th></th>
-		</tr>
-
-		<%
+			<%
 			for (User u : users) {
 		%>
-		<tr>
+			<tr>
 
-			<td><%=u.getFirstName()%></td>
-			<td><%=u.getLastName()%></td>
-			<td><%=u.getEmail()%></td>
-			<td><%=u.getRole()%></td>
-			<td>
-				<form action="UserServlet" method="POST">
-					<input type="hidden" name="action" value="delete"> <input
-						type="hidden" name="email" value="<%=u.getEmail()%>"> <input
-						type="submit" value="delete">
+				<td><%=u.getFirstName()%></td>
+				<td><%=u.getLastName()%></td>
+				<td><%=u.getEmail()%></td>
+				<td><%=u.getRole()%></td>
+				<td>
+					<form action="UserServlet" method="POST">
+						<input type="hidden" name="action" value="delete"> <input type="hidden" name="email"
+							value="<%=u.getEmail()%>"> <input type="submit" value="delete">
 
-				</form>
-			</td>
-		</tr>
+					</form>
+				</td>
+			</tr>
 
 
-		<%
+			<%
 			}
 		%>
 
 
 
 
-	</table>
-	<div>
-		<form action="UserServlet" method="POST">
-			<input type="text" name="firstname"> <input type="text"
-				name="lastname"> <input type="email" name="email"> <select
-				name="role">
-				<option value="ADMIN">Admin</option>
-				<option value="STUDENT">Student</option>
-				<option value="TEACHER">Teacher</option>
+		</table>
+		<div class="formbox">
+			<h3>aggiungi un utente</h3>
+			<form action="UserServlet" method="POST">
+				<input type="hidden" name="action" value="create">
+				<div><label for="firstname">Nome:</label><input type="text" name="firstname"></div>
+				<div><label for="lastname">Cognome:</label><input type="text" name="lastname"></div>
+				<div><label for="email">Mail:</label><input type="email" name="email"></div>
+				<div><label for="password">Password:</label><input type="text" name="password" value="cambiami"></div>
+				<label for="role">Ruolo:</label><select name="role">
+					<option value="ADMIN">Admin</option>
+					<option value="STUDENT">Student</option>
+					<option value="TEACHER">Teacher</option>
+				</select>
 
-			</select> <input type="text" name="password" value="cambiami"> <input
-				type="hidden" name="action" value="create"> <input
-				type="submit" value="insert">
-		</form>
+				<input type="submit" value="aggiungi">
+			</form>
+		</div>
 	</div>
 
-	<table>
+	<h2>Elenco corsi</h2>
+	<div class="table">
+		<table>
 
 
-		<tr>
-			<th>Nome</th>
-			<th>Descrizione</th>
-			<th>CFU</th>
-			<th>Professore</th>
-			<th></th>
-		</tr>
+			<tr>
+				<th>Nome</th>
+				<th>Descrizione</th>
+				<th>CFU</th>
+				<th>Professore</th>
+				<th></th>
+			</tr>
 
-		<%
+			<%
 			for (Course c : courses) {
 		%>
-		<tr>
+			<tr>
 
-			<td><%=c.getName()%></td>
-			<td><%=c.getDescription()%></td>
-			<td><%=c.getCfu()%></td>
-			<td><%=c.getTeacher().getFirstName() + " " + c.getTeacher().getLastName()%></td>
-			<td>
-				<form action="CourseServlet" method="POST">
-					<input type="hidden" name="action" value="delete"> <input
-						type="hidden" name="id" value="<%=c.getId()%>"> <input
-						type="submit" value="delete">
+				<td><%=c.getName()%></td>
+				<td><%=c.getDescription()%></td>
+				<td><%=c.getCfu()%></td>
+				<td><%=c.getTeacher().getFirstName() + " " + c.getTeacher().getLastName()%></td>
+				<td>
+					<form action="CourseServlet" method="POST">
+						<input type="hidden" name="action" value="delete"> <input type="hidden" name="id"
+							value="<%=c.getId()%>"> <input type="submit" value="delete">
 
-				</form>
-			</td>
-		</tr>
+					</form>
+				</td>
+			</tr>
 
 
-		<%
+			<%
 			}
 		%>
 
 
 
 
-	</table>
+		</table>
+		<div class="formbox">
+			<h3>aggiungi un utente</h3>
 
-	<div>
-		<form action="CourseServlet" method="POST">
-			<input type="text" name="name"> <input type="text"
-				name="description"> <input type="number" name="CFU" max="30"
-				min="1" value="5"> <select name="teacher">
-				<%
-					for (User u : teachers) {
-				%>
-				<option value="<%=u.getId()%>"><%=u.getFirstName() + " " + u.getLastName()%></option>
-				<%
-					}
-				%>
-
-			</select> <input type="hidden" name="action" value="create"> <input
-				type="submit" value="insert">
-		</form>
-	</div>
-
-
+			<div>
+				<form action="CourseServlet" method="POST">
+					<div><label for="name">Nome corso:</label><input type="text" name="name"></div>
+					<div><label for="CFU">Crediti formativi:</label><input type="number" name="CFU" max="30" min="1"
+							value="5"></div>
+					<div><label for="description">Descrizione:</label>
+						<textarea name="description"></textarea>
+					</div>
+					<label for="teacher">Docente:</label><select name="teacher">
+						<%	for (User u : teachers) {	%>
+						<option value="<%=u.getId()%>"><%=u.getFirstName() + " " + u.getLastName()%></option>
+						<%	} %>
+					</select> <input type="hidden" name="action" value="create"> <input type="submit" value="insert">
+				</form>
+			</div>
 
 
-
-	<%
-		} else if (user.getRole() == UserRole.TEACHER) {// admin logged end
-	%>
-
-	<h2>I miei corsi:</h2>
-
-	<ul>
+		</div>
 
 
-		<%
+		<%	} else if (user.getRole() == UserRole.TEACHER) {    // admin logged end
+			%>
+
+		<h2>I miei corsi:</h2>
+
+		<ul class="courselist">
+
+
+			<%
 			for (Course c : teachedCourses) {
 		%>
-		<li>
-			<h3><%=c.getName()%></h3>
-			<p>
-				<%=c.getDescription()%></p>
-			<p>
-				CFU:
-				<%=c.getCfu()%></p>
-			<table>
+			<li>
 
-				<%
+				<details>
+					<summary><%=c.getName()%></summary>
+					<%=c.getDescription()%>
+					<p>CFU: <%=c.getCfu()%></p>
+
+				</details>
+
+
+				<table>
+
+					<%
 					for (Vote v : c.getVotes()) {
 				%>
-				<tr>
-					<td><%=v.getStudent().getFirstName() + " " + v.getStudent().getLastName()%></td>
-					<td>
-						<%
+					<tr>
+						<td><%=v.getStudent().getFirstName() + " " + v.getStudent().getLastName()%></td>
+						<td>
+							<%
 							if (v.getStatus() == VoteStatus.VOID) {
 						%> N.A. <%
 							} else {
@@ -222,159 +234,165 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
  %>
 
 
-					</td>
-					<td>
-						<%
+						</td>
+						<td>
+							<%
 							if (v.getStatus() == VoteStatus.VOID || v.getStatus() == VoteStatus.DECLINED) {
 						%>
-						<form action="VoteServlet" method="POST">
-							<input type="hidden" name="action" value="assign"> <input
-								type="number" name="assigned" value="18"> <input
-								type="hidden" name="vote" value="<%=v.getId()%>"> <input
-								type="submit" value="Assegna">
-						</form> <%
- 	}
+							<form action="VoteServlet" method="POST">
+								<input type="hidden" name="action" value="assign">
+								<input type="number" name="assigned" value="18">
+								<input type="hidden" name="vote" value="<%=v.getId()%>">
+								<input type="submit" value="Assegna">
+							</form>
+							<%
+ 	}else if (v.getStatus() == VoteStatus.ACCEPTED){ 
  %>
-					</td>
+<span class="accepted">Accettato</span>
+							<% } %>
+						</td>
 
 
 
 
-				</tr>
+					</tr>
 
-				<%
+					<%
 					}
 				%>
-			</table>
+				</table>
 
 
 
-		</li>
+			</li>
 
 
 
 
-		<%
+			<%
 			}
 		%>
-	</ul>
-	<%
-		} else if (user.getRole() == UserRole.STUDENT) {// teacher logged end
+		</ul>
+		<%
+		} else if (user.getRole() == UserRole.STUDENT) {     // teacher logged end
 	%>
 
-	<table>
+
+		<h2>I miei corsi</h2>
+		<table>
+
+			<%
+		for (Vote v : myVotes) {
+	%>
+			<tr>
+				<td><%=v.getCourse().getName()%></td>
+				<td><%=v.getCourse().getTeacher().getLastName()%></td>
+				<td>
+					<%
+				if (v.getStatus() == VoteStatus.VOID) {
+			%> N.A. <%
+				} else {
+			%> <%=v.getVote()%> <%
+ }
+%>
 
 
-		<tr>
-			<th>Nome</th>
-			<th>Descrizione</th>
-			<th>CFU</th>
-			<th>Professore</th>
-			<th></th>
-		</tr>
+				</td>
+				<td>
+					<%
+				if (v.getStatus() == VoteStatus.ASSIGNED) {
+			%>
+					<form action="VoteServlet" method="POST">
+						<input type="hidden" name="action" value="accept"> <input type="hidden" name="vote"
+							value="<%=v.getId()%>"> <input type="submit" value="accetta">
+					</form>
 
-		<%
+					<form action="VoteServlet" method="POST">
+						<input type="hidden" name="action" value="decline"> <input type="hidden" name="vote"
+							value="<%=v.getId()%>"> <input type="submit" value="rifiuta">
+					</form> <%
+			 } else if (v.getStatus() == VoteStatus.VOID) {
+		 %>
+
+
+					<form action="VoteServlet" method="POST">
+						<input type="hidden" name="action" value="resign"> <input type="hidden" name="vote"
+							value="<%=v.getId()%>"> <input type="submit" value="Ritirati">
+					</form>
+					<%
+ } else if (v.getStatus() == VoteStatus.DECLINED) {
+%> <span class="declined">Rifiutato</span>
+					<%
+ } else if (v.getStatus() == VoteStatus.ACCEPTED) {
+%> <span class="accepted">Definitivo</span>
+
+
+					<%
+ }
+%>
+
+
+				</td>
+
+
+			</tr>
+
+			<%
+		}
+	%>
+		</table>
+
+
+		<h2>Elenco corsi</h2>
+
+		<table>
+
+
+			<tr>
+				<th>Nome</th>
+				<th>Descrizione</th>
+				<th>CFU</th>
+				<th>Professore</th>
+				<th></th>
+			</tr>
+
+			<%
 			for (Course c : courses) {
 		%>
-		<tr>
+			<tr>
 
-			<td><%=c.getName()%></td>
-			<td><%=c.getName()%></td>
-			<td><%=c.getDescription()%></td>
-			<td><%=c.getCfu()%></td>
-			<td><%=c.getTeacher().getFirstName() + " " + c.getTeacher().getLastName()%></td>
-			<td>
-				<form action="VoteServlet" method="POST">
-					<input type="hidden" name="action" value="subscribe"> <input
-						type="hidden" name="course" value="<%=c.getId()%>"> <input
-						type="submit" value="Iscriviti">
-				</form>
-			</td>
-		</tr>
+				<td><%=c.getName()%></td>
+				<td><%=c.getName()%></td>
+				<td><%=c.getDescription()%></td>
+				<td><%=c.getCfu()%></td>
+				<td><%=c.getTeacher().getFirstName() + " " + c.getTeacher().getLastName()%></td>
+				<td>
+					<form action="VoteServlet" method="POST">
+						<input type="hidden" name="action" value="subscribe"> <input type="hidden" name="course"
+							value="<%=c.getId()%>"> <input type="submit" value="Iscriviti">
+					</form>
+				</td>
+			</tr>
 
-		<%
+			<%
 			}
 		%>
 
 
 
-	</table>
+		</table>
 
 
-	<table>
+
 
 		<%
-			for (Vote v : myVotes) {
-		%>
-		<tr>
-			<td><%=v.getCourse().getName()%></td>
-			<td><%=v.getCourse().getTeacher().getLastName()%></td>
-			<td>
-				<%
-					if (v.getStatus() == VoteStatus.VOID) {
-				%> N.A. <%
-					} else {
-				%> <%=v.getVote()%> <%
- 	}
- %>
-
-
-			</td>
-			<td>
-				<%
-					if (v.getStatus() == VoteStatus.ASSIGNED) {
-				%>
-				<form action="VoteServlet" method="POST">
-					<input type="hidden" name="action" value="accept"> <input
-						type="hidden" name="vote" value="<%=v.getId()%>"> <input
-						type="submit" value="accetta">
-				</form>
-
-				<form action="VoteServlet" method="POST">
-					<input type="hidden" name="action" value="decline"> <input
-						type="hidden" name="vote" value="<%=v.getId()%>"> <input
-						type="submit" value="rifiuta">
-				</form> <%
- 				} else if (v.getStatus() == VoteStatus.VOID) {
- 			%>
-
-
-				<form action="VoteServlet" method="POST">
-					<input type="hidden" name="action" value="resign"> <input
-						type="hidden" name="vote" value="<%=v.getId()%>"> <input
-						type="submit" value="Ritirati">
-				</form>
-				<%
- 	} else if (v.getStatus() == VoteStatus.DECLINED) {
- %> <span class="declined">Rifiutato</span>
- 				<%
- 	} else if (v.getStatus() == VoteStatus.ACCEPTED) {
- %> <span class="accepted">Definitivo</span>
- 
- 
-  <%
- 	}
- %>
-
-
-			</td>
-
-
-		</tr>
-
-		<%
-			}
-		%>
-	</table>
-
-
-	<%
 		} // student logged end
 	%>
 
-	<%
+		<%
 		} //all logged end
 	%>
 
 </body>
+
 </html>

@@ -7,10 +7,13 @@
 
 %>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Profile</title>
+	<meta charset="UTF-8">
+	<title>Profile settings</title>
+	<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 	<%
@@ -29,26 +32,28 @@
 	<%
 		} else {
 	%>
-	
-	
+
+	<div class="login">
+		<h2>Cambia password</h2>
 		<form action="LoginServlet" method="POST" class="login">
 
-		Inserisci password <input type="password" name="password">
-		Inserisci nuova password <input type="password" name="newpassword">
-		Ripeti nuova password <input type="password" name="newpassword2">
-		
-		 <input
-			type="hidden" name="action" value="change"> <input
-			type="submit" value="submit">
+			<div><label for="password">Inserisci password</label><input type="password" name="password"></div>
+			<div><label for="newpassword">Inserisci nuova password</label><input type="password" name="newpassword">
+			</div>
+			<div><label for="newpassword2">Ripeti nuova password</label><input type="password" name="newpassword2">
+			</div>
+			<input type="hidden" name="action" value="change">
+			<input type="submit" value="submit">
 
-	</form>
-	
-	
-	
-	
+		</form>
+		<a href="index.jsp"><button>indietro</button></a>
+	</div>
+
+
 	<%
 		}
 	%>
 
 </body>
+
 </html>

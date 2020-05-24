@@ -1,0 +1,134 @@
+body {
+    padding: 0 0.5em;
+}
+
+header {
+    width: 100;
+    background-color: aquamarine;
+    color: blue;
+    padding: 1em;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 3em;
+    margin: 0;
+    padding: 0;
+}
+
+div.login {
+    margin: 2em;
+    padding: 1em;
+    border-radius: 0.em;
+    border: 2px lightgreen solid;
+    width: min-content;
+    background: lightcyan;
+    color: black;
+    line-height: 1.3em;
+}
+
+div.login h2 {
+    margin: 0 0 0.5em;
+}
+
+div.login input {
+    margin-bottom: 0.5em;
+}
+
+div.login form {
+    display: inline;
+}
+
+.logout a, .logout input[type=submit] {
+    border: none;
+    background: none;
+    color: skyblue;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: medium;
+}
+
+.welcome {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+table {
+    border: 2px lightgreen solid;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0.5em;
+}
+
+td {
+    padding: 0.2em 1.4em 0.2em;
+    border-style: dashed;
+    border-color: lightgreen;
+    border-width: 2px;
+    max-width: 15em;
+}
+
+table input[type=number] {
+    width: 3em;
+}
+
+table input[type=submit] {
+    border: none;
+    background: none;
+    color: lightskyblue;
+    cursor: pointer;
+    font-size: medium;
+    text-decoration: none;
+}
+
+table input[type=submit]:hover {
+    color: red;
+}
+
+table form {
+    display: inline-block;
+}
+
+div.error {
+    background-color: aquamarine;
+    border: solid 1px blue;
+    position: sticky;
+    top: 0.2em;
+    margin: 0.2em auto;
+    padding: 0.5em;
+    width: max-content;
+}
+
+div.table {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+div.formbox {
+    padding: 1em;
+    border: 1px lightgreen dashed;
+    margin: 0;
+    width: fit-content;
+}
+
+div.formbox label {
+    min-width: 9em;
+    display: inline-block;
+}
+
+div.formbox input[type=text], div.formbox input[type=email] {
+    width: 15em;
+    display: inline-block;
+}
+
+.declined {
+    color: orangered;
+}
+
+.accepted {
+    color: blueviolet;
+}

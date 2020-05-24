@@ -70,25 +70,24 @@ public class LoginServlet extends HttpServlet {
 				stmt.setString(1, email);
 				ResultSet rs = stmt.executeQuery();
 
-				if (rs.next()) { // TODO error handling
+				HttpSession session = request.getSession();
+				if (request.getParameter("JSESSIONID") != null) {
+					Cookie userCookie = new Cookie("JSESSIONID", request.getParameter("JSESSIONID"));
+					response.addCookie(userCookie);
+				} else {
+					String sessionId = session.getId();
+					Cookie userCookie = new Cookie("JSESSIONID", sessionId);
+					response.addCookie(userCookie);
+				}
 
-					if (sha256(rs.getString("salt") + password).equals(rs.getString("passwordhash"))) { // TODO error
-																										// handling
+				if (rs.next()) {
+
+					if (sha256(rs.getString("salt") + password).equals(rs.getString("passwordhash"))) {
 
 						User user = UserDAO.newUser(email);
 
-						HttpSession session = request.getSession();
-						if (request.getParameter("JSESSIONID") != null) {
-							Cookie userCookie = new Cookie("JSESSIONID", request.getParameter("JSESSIONID"));
-							response.addCookie(userCookie);
-						} else {
-							String sessionId = session.getId();
-							Cookie userCookie = new Cookie("JSESSIONID", sessionId);
-							response.addCookie(userCookie);
-						}
+						// setup session
 
-						//setup session
-						
 						session.setAttribute("user", user);
 						List<User> teachers = UserDAO.getTeachersListFromDB();
 						session.setAttribute("teachers", teachers);
@@ -109,13 +108,22 @@ public class LoginServlet extends HttpServlet {
 
 							List<Vote> myVotes = VoteDAO.getStudentVotesFromDB(user.getId());
 							session.setAttribute("myVotes", myVotes);
+							break;
 
-						default: // TODO error handling
+						default:
+							session.setAttribute("error", "Errore di DB, ruolo inesistente");
+
 							break;
 						}
 
-						//end setup session
+						// end setup session
+					} else {
+						session.setAttribute("error", "Password errata");
+
 					}
+
+				} else {
+					session.setAttribute("error", "Email sconosciuta");
 
 				}
 
@@ -164,20 +172,28 @@ public class LoginServlet extends HttpServlet {
 
 				if (rs.next()) { // TODO error handling
 
-					if (request.getParameter("newpassword").equals(request.getParameter("newpassword2"))
-							&& sha256(rs.getString("salt") + password).equals(rs.getString("passwordhash"))) { // TODO
-																												// error
-																												// handling
+					if (request.getParameter("newpassword").equals(request.getParameter("newpassword2"))) {
 
-						Random RANDOM = new SecureRandom();
-						String salt = Integer.toString(RANDOM.nextInt());
-						UserDAO.updatePassword(user, salt, sha256(salt + request.getParameter("newpassword")));
+						if (sha256(rs.getString("salt") + password).equals(rs.getString("passwordhash"))) {
 
+							Random RANDOM = new SecureRandom();
+							String salt = Integer.toString(RANDOM.nextInt());
+							UserDAO.updatePassword(user, salt, sha256(salt + request.getParameter("newpassword")));
+
+						}else {
+							session.setAttribute("error", "Password errata");
+							response.sendRedirect("profile.jsp");
+							return;
+						}
 					} else {
+						session.setAttribute("error", "Errore di digitazione, le due password non coincidono");
 						response.sendRedirect("profile.jsp");
 						return;
 
 					}
+
+				} else {
+					session.setAttribute("error", "Errore interno, utente non valido");
 
 				}
 

@@ -3,6 +3,8 @@
 <!DOCTYPE html>
 <%
 	User user = (User) session.getAttribute("user");
+	String errorMessage = session.getAttribute("error") == null ? null : session.getAttribute("error").toString();
+
 %>
 <html>
 <head>
@@ -10,6 +12,15 @@
 <title>Profile</title>
 </head>
 <body>
+
+	<%
+		if (errorMessage != null) {
+	%>
+	<div class="error"><%=errorMessage%></div>
+	<%
+		session.setAttribute("error", null);
+	}
+	%>
 
 	<%
 		if (user == null) {

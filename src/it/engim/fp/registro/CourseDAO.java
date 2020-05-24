@@ -32,7 +32,7 @@ public class CourseDAO {
 
 	}
 
-	public static Course newCourse(int id) {
+	public static Course newCourse(int id) throws DAOException {
 
 		Course newClass = new Course();
 
@@ -57,7 +57,7 @@ public class CourseDAO {
 
 	}
 
-	public static void insertToDB(Course toinsert) {
+	public static void insertToDB(Course toinsert) throws DAOException {
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
@@ -74,10 +74,11 @@ public class CourseDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Impossibile inserire il corso, probabile duplicato");
 		}
 	}
 
-	public static void deleteFromDb(int id) {
+	public static void deleteFromDb(int id) throws DAOException {
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
@@ -88,10 +89,12 @@ public class CourseDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Impossibile eliminare il corso");
+
 		}
 	}
 
-	public static List<Course> getListFromDB() {
+	public static List<Course> getListFromDB() throws DAOException {
 		LinkedList<Course> list = new LinkedList<Course>();
 
 		try {
@@ -116,7 +119,7 @@ public class CourseDAO {
 	}
 	
 	
-	public static List<Course> getTeacherCoursesFromDB(int teacherId) {
+	public static List<Course> getTeacherCoursesFromDB(int teacherId) throws DAOException {
 		LinkedList<Course> list = new LinkedList<Course>();
 
 		try {

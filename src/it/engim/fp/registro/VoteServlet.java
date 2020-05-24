@@ -44,57 +44,68 @@ public class VoteServlet extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 
 		try {
-
+			Vote vote;
 			switch (request.getParameter("action")) {
 			case "subscribe":
 				if (user.getRole() == UserRole.STUDENT) {
 					Course course = CourseDAO.newCourse(Integer.parseInt(request.getParameter("course")));
-				//	VoteDAO.insertToDB(VoteDAO.newVote(course, user, 0, VoteStatus.VOID)); //TODO find bug
-					VoteDAO.insertToDB(Integer.parseInt(request.getParameter("course")), user.getId());
+					VoteDAO.insertToDB(VoteDAO.newVote(course, user, 0, VoteStatus.VOID));
 					List<Vote> myVotes = VoteDAO.getStudentVotesFromDB(user.getId());
 					session.setAttribute("myVotes", myVotes);
-				} // TODO manage error
+				}else {
+					session.setAttribute("error", "Autorizzazione negata, solo gli studenti possono isriversi a un corso");
+				}
 
 				break;
 			case "resign":
-				if (user.getRole() == UserRole.STUDENT) {
-				//	Course course = CourseDAO.newCourse(Integer.parseInt(request.getParameter("course")));
-				//	VoteDAO.insertToDB(VoteDAO.newVote(course, user, 0, VoteStatus.VOID)); //TODO find bug
-					VoteDAO.deleteFromDb(Integer.parseInt(request.getParameter("vote")));
+				vote = VoteDAO.newVote(Integer.parseInt(request.getParameter("vote")));
+				if (user.getRole() == UserRole.STUDENT&& vote.getStatus() == VoteStatus.VOID && vote.getStudent().getId() == user.getId()) {
+					VoteDAO.deleteFromDb(vote.getId());
 					List<Vote> myVotes = VoteDAO.getStudentVotesFromDB(user.getId());
 					session.setAttribute("myVotes", myVotes);
-				} // TODO manage error
+				} else {
+					session.setAttribute("error", "Autorizzazione negata, non puoi abbandonare questo corso");
+				}
 
 				break;
 			case "accept":
-				Vote vote = VoteDAO.newVote(Integer.parseInt(request.getParameter("vote")));
-				if (user.getRole() == UserRole.STUDENT && vote.getStatus() == VoteStatus.ASSIGNED) {
+				vote = VoteDAO.newVote(Integer.parseInt(request.getParameter("vote")));
+				if (user.getRole() == UserRole.STUDENT && vote.getStatus() == VoteStatus.ASSIGNED && vote.getStudent().getId() == user.getId()) {
 					VoteDAO.accept(vote.getId());
 					List<Vote> myVotes = VoteDAO.getStudentVotesFromDB(user.getId());
 					session.setAttribute("myVotes", myVotes);
-				} // TODO manage error
+				}else {
+					session.setAttribute("error", "Autorizzazione negata");
+				}
 				break;
 			case "decline":
 				vote = VoteDAO.newVote(Integer.parseInt(request.getParameter("vote")));
-				if (user.getRole() == UserRole.STUDENT && vote.getStatus() == VoteStatus.ASSIGNED) {
+				if (user.getRole() == UserRole.STUDENT && vote.getStatus() == VoteStatus.ASSIGNED && vote.getStudent().getId() == user.getId()) {
 					VoteDAO.decline(vote.getId());
 					List<Vote> myVotes = VoteDAO.getStudentVotesFromDB(user.getId());
 					session.setAttribute("myVotes", myVotes);
-				} // TODO manage error
+				}else{
+					session.setAttribute("error", "Autorizzazione negata");
+				}
 				break;
 			case "assign":
 				vote = VoteDAO.newVote(Integer.parseInt(request.getParameter("vote")));
 				if (user.getRole() == UserRole.TEACHER
-						&& (vote.getStatus() == VoteStatus.VOID || vote.getStatus() == VoteStatus.DECLINED)) {
+						&& (vote.getStatus() == VoteStatus.VOID || vote.getStatus() == VoteStatus.DECLINED) && vote.getCourse().getTeacher().getId() == user.getId()) {
 					VoteDAO.assign(vote.getId(), Integer.parseInt(request.getParameter("assigned")));
 					List<Course> teachedCourses = CourseDAO.getTeacherCoursesFromDB(user.getId());
 					session.setAttribute("teachedCourses", teachedCourses);
-				} // TODO manage error
+				}else{
+					session.setAttribute("error", "Autorizzazione negata");
+				}
 				break;
 
 			default:
 				break;
 			}
+
+		}catch (DAOException DAOError) {
+			session.setAttribute("error", DAOError);
 
 		} catch (Exception theException) {
 			System.out.println(theException);

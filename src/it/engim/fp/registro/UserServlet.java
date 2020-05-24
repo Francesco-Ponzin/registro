@@ -66,13 +66,12 @@ public class UserServlet extends HttpServlet {
 
 		User user = (User) session.getAttribute("user");
 		if (user == null || user.getRole() != UserRole.ADMIN) {
-			//TODO error handling
+
+			session.setAttribute("error", "Autorizzazione negata, azione riservata agli amministratori");
 			response.sendRedirect("index.jsp");
 			return;
 		}
-		
-		
-		
+
 		try {
 			List<User> users;
 
@@ -101,8 +100,12 @@ public class UserServlet extends HttpServlet {
 				break;
 			}
 
+		} catch (DAOException DAOError) {
+			session.setAttribute("error", DAOError);
+
 		} catch (Exception theException) {
-			System.out.println(theException);
+			System.out.println(theException.getMessage());
+
 		} finally {
 			response.sendRedirect("index.jsp");
 		}

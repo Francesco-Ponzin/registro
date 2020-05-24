@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class UserDAO {
+public class UserDAO{
 	
 	public static User newUser(int id, String email, String firstName, String lastName, String role) {
 
@@ -62,7 +62,7 @@ public class UserDAO {
 
 	}
 
-	public static User newUser(String email) {
+	public static User newUser(String email) throws DAOException{
 
 		User newUser = new User();
 
@@ -81,12 +81,13 @@ public class UserDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Utente non trovato");
 		}
 		return newUser;
 
 	}
 	
-	public static User newUser(int id) {
+	public static User newUser(int id) throws DAOException{
 
 		User newUser = new User();
 
@@ -107,12 +108,14 @@ public class UserDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Utente non trovato");
+
 		}
 		return newUser;
 
 	}
 
-	public static void insertToDB(User user, String salt, String passwordhash) {
+	public static void insertToDB(User user, String salt, String passwordhash)  throws DAOException{
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
@@ -133,11 +136,13 @@ public class UserDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Impossibile creare l'utente, verificare che la mail non sia già presente");
+
 		}
 	}
 	
 	
-	public static void updatePassword(User user, String salt, String passwordhash) {
+	public static void updatePassword(User user, String salt, String passwordhash) throws DAOException {
 	
 		try {
 
@@ -157,13 +162,15 @@ public class UserDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Utente non trovato");
+
 		}
 		
 	}
 
 	
 
-	public static void deleteFromDb(String email) {
+	public static void deleteFromDb(String email)  throws DAOException{
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
@@ -174,10 +181,12 @@ public class UserDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Impossibile cancellare l'utente");
+
 		}
 	}
 	
-	public static void deleteFromDb(int id) {
+	public static void deleteFromDb(int id)  throws DAOException{
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
@@ -188,6 +197,8 @@ public class UserDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Impossibile cancellare l'utenteo");
+
 		}
 	}
 

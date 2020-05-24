@@ -34,7 +34,8 @@ CREATE TABLE votes (
     vote int,
     status enum("VOID", "ASSIGNED", "ACCEPTED", "DECLINED"),
     CONSTRAINT FK_R_1 FOREIGN KEY (course) references courses(ID) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT FK_R_2 FOREIGN KEY (student) references users(ID) ON DELETE RESTRICT ON UPDATE CASCADE	
+    CONSTRAINT FK_R_2 FOREIGN KEY (student) references users(ID) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT FK_unique UNIQUE (course,student)
 
 );
 

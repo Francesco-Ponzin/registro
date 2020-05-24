@@ -52,7 +52,7 @@ public class CourseServlet extends HttpServlet {
 			case "create":
 				
 				if (user == null || user.getRole() != UserRole.ADMIN) {
-					//TODO error handling
+					session.setAttribute("error", "Autorizzazione negata, solo gli amministratori possono creare un corso");
 					response.sendRedirect("index.jsp");
 					return;
 				}
@@ -66,7 +66,7 @@ public class CourseServlet extends HttpServlet {
 			case "delete":
 				
 				if (user == null || user.getRole() != UserRole.ADMIN) {
-					//TODO error handling
+					session.setAttribute("error", "Autorizzazione negata, solo gli amministratori possono eliminare un corso");
 					response.sendRedirect("index.jsp");
 					return;
 				}
@@ -78,6 +78,9 @@ public class CourseServlet extends HttpServlet {
 			default:
 				break;
 			}
+
+		}catch (DAOException DAOError) {
+			session.setAttribute("error", DAOError);
 
 		} catch (Exception theException) {
 			System.out.println(theException);

@@ -52,7 +52,7 @@ public class VoteDAO {
 
 	}
 
-	public static Vote newVote(int id) {
+	public static Vote newVote(int id) throws DAOException {
 
 		Vote newVote = new Vote();
 
@@ -79,7 +79,7 @@ public class VoteDAO {
 
 	}
 
-	public static void insertToDB(Vote toinsert) {
+	public static void insertToDB(Vote toinsert) throws DAOException {
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
@@ -96,10 +96,14 @@ public class VoteDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Impossibile iscriversi al corso, probabile duplicato");
+
 		}
 	}
 	
-	public static void insertToDB(int course, int student) {
+	
+	/*
+	public static void insertToDB(int course, int student) throws DAOException {
 		try {
 
 			Connection currentCon = DBconnect.getConnection();
@@ -116,9 +120,11 @@ public class VoteDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new DAOException("Impossibile iscriversi al corso, probabile duplicato");
+
 		}
 	}
-
+*/
 	public static void deleteFromDb(int id) {
 		try {
 
@@ -134,7 +140,7 @@ public class VoteDAO {
 		}
 	}
 
-	public static List<Vote> getListFromDB() {
+	public static List<Vote> getListFromDB() throws DAOException {
 		LinkedList<Vote> list = new LinkedList<Vote>();
 
 		try {
@@ -158,7 +164,7 @@ public class VoteDAO {
 
 	}
 
-	public static List<Vote> getCourseVotesFromDB(int courseId) {
+	public static List<Vote> getCourseVotesFromDB(int courseId) throws DAOException {
 		LinkedList<Vote> list = new LinkedList<Vote>();
 
 		try {
@@ -182,7 +188,7 @@ public class VoteDAO {
 		return list;
 	}
 	
-	public static List<Vote> getStudentVotesFromDB(int studentId) {
+	public static List<Vote> getStudentVotesFromDB(int studentId) throws DAOException {
 		LinkedList<Vote> list = new LinkedList<Vote>();
 
 		try {

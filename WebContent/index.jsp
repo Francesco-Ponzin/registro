@@ -4,12 +4,13 @@
 
 
 <%
-User user = (User) session.getAttribute("user");
+	User user = (User) session.getAttribute("user");
 List<User> users = (List<User>) session.getAttribute("users");
 List<User> teachers = (List<User>) session.getAttribute("teachers");
 List<Course> courses = (List<Course>) session.getAttribute("courses");
 List<Vote> myVotes = (List<Vote>) session.getAttribute("myVotes");
 List<Course> teachedCourses = (List<Course>) session.getAttribute("teachedCourses");
+String errorMessage = session.getAttribute("error") == null ? null : session.getAttribute("error").toString();
 %>
 
 
@@ -19,6 +20,14 @@ List<Course> teachedCourses = (List<Course>) session.getAttribute("teachedCourse
 <title>Registro Elettronico</title>
 </head>
 <body>
+	<%
+		if (errorMessage != null) {
+	%>
+	<div class="error"><%=errorMessage%></div>
+	<%
+		session.setAttribute("error", null);
+	}
+	%>
 
 	<%
 		if (user == null) {
@@ -109,7 +118,7 @@ List<Course> teachedCourses = (List<Course>) session.getAttribute("teachedCourse
 				<option value="STUDENT">Student</option>
 				<option value="TEACHER">Teacher</option>
 
-			</select> <input type="hidden" name="password" value="cambiami"> <input
+			</select> <input type="text" name="password" value="cambiami"> <input
 				type="hidden" name="action" value="create"> <input
 				type="submit" value="insert">
 		</form>
@@ -163,7 +172,7 @@ List<Course> teachedCourses = (List<Course>) session.getAttribute("teachedCourse
 				<%
 					for (User u : teachers) {
 				%>
-				<option value="<%=u.getId()%>"><%=u.getEmail()%>+<%=u.getFirstName() + " " + u.getLastName()%></option>
+				<option value="<%=u.getId()%>"><%=u.getFirstName() + " " + u.getLastName()%></option>
 				<%
 					}
 				%>
@@ -223,10 +232,9 @@ List<Course> teachedCourses = (List<Course>) session.getAttribute("teachedCourse
 								type="number" name="assigned" value="18"> <input
 								type="hidden" name="vote" value="<%=v.getId()%>"> <input
 								type="submit" value="Assegna">
-						</form>
-						<%
-							}
-						%>
+						</form> <%
+ 	}
+ %>
 					</td>
 
 
@@ -315,33 +323,41 @@ List<Course> teachedCourses = (List<Course>) session.getAttribute("teachedCourse
 			<td>
 				<%
 					if (v.getStatus() == VoteStatus.ASSIGNED) {
-				%> 				<form action="VoteServlet" method="POST">
+				%>
+				<form action="VoteServlet" method="POST">
 					<input type="hidden" name="action" value="accept"> <input
-						type="hidden" name="vote" value="<%=v.getId()%>">
-					<input type="submit" value="accetta">
-				</form> 
+						type="hidden" name="vote" value="<%=v.getId()%>"> <input
+						type="submit" value="accetta">
+				</form>
 
-<form action="VoteServlet" method="POST">
+				<form action="VoteServlet" method="POST">
 					<input type="hidden" name="action" value="decline"> <input
-						type="hidden" name="vote" value="<%=v.getId()%>">
-					<input type="submit" value="rifiuta">
-				</form> 
+						type="hidden" name="vote" value="<%=v.getId()%>"> <input
+						type="submit" value="rifiuta">
+				</form> <%
+ 				} else if (v.getStatus() == VoteStatus.VOID) {
+ 			%>
 
- <%
-					} else if (v.getStatus() == VoteStatus.VOID) {
-				%> <td>
+
 				<form action="VoteServlet" method="POST">
 					<input type="hidden" name="action" value="resign"> <input
-						type="hidden" name="vote" value="<%=v.getCourse().getId()%>">
-					<input type="submit" value="Ritirati">
+						type="hidden" name="vote" value="<%=v.getId()%>"> <input
+						type="submit" value="Ritirati">
 				</form>
-			</td> <%
+				<%
+ 	} else if (v.getStatus() == VoteStatus.DECLINED) {
+ %> <span class="declined">Rifiutato</span>
+ 				<%
+ 	} else if (v.getStatus() == VoteStatus.ACCEPTED) {
+ %> <span class="accepted">Definitivo</span>
+ 
+ 
+  <%
  	}
  %>
+
+
 			</td>
-			
-
-
 
 
 		</tr>

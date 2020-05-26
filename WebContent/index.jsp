@@ -99,7 +99,7 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
 				<td>
 					<form action="UserServlet" method="POST">
 						<input type="hidden" name="action" value="delete"> <input type="hidden" name="email"
-							value="<%=u.getEmail()%>"> <input type="submit" value="delete">
+							value="<%=u.getEmail()%>"> <input type="submit" value="elimina">
 
 					</form>
 				</td>
@@ -158,7 +158,7 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
 				<td>
 					<form action="CourseServlet" method="POST">
 						<input type="hidden" name="action" value="delete"> <input type="hidden" name="id"
-							value="<%=c.getId()%>"> <input type="submit" value="delete">
+							value="<%=c.getId()%>"> <input type="submit" value="elimina">
 
 					</form>
 				</td>
@@ -188,7 +188,7 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
 						<%	for (User u : teachers) {	%>
 						<option value="<%=u.getId()%>"><%=u.getFirstName() + " " + u.getLastName()%></option>
 						<%	} %>
-					</select> <input type="hidden" name="action" value="create"> <input type="submit" value="insert">
+					</select> <input type="hidden" name="action" value="create"> <input type="submit" value="aggiungi">
 				</form>
 			</div>
 
@@ -361,7 +361,6 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
 		%>
 			<tr>
 
-				<td><%=c.getName()%></td>
 				<td><%=c.getName()%></td>
 				<td><%=c.getDescription()%></td>
 				<td><%=c.getCfu()%></td>

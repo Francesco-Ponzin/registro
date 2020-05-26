@@ -1,5 +1,7 @@
 body {
     padding: 0 0.5em;
+    font-family: Arial, Helvetica, sans-serif;
+
 }
 
 header {
@@ -46,6 +48,7 @@ div.login form {
     text-decoration: none;
     cursor: pointer;
     font-size: medium;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .welcome {
@@ -120,7 +123,7 @@ div.formbox label {
     display: inline-block;
 }
 
-div.formbox input[type=text], div.formbox input[type=email] {
+div.formbox input[type=text], div.formbox input[type=email], div.formbox input[type=number], div.formbox textarea {
     width: 15em;
     display: inline-block;
 }

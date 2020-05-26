@@ -174,7 +174,7 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
 
 		</table>
 		<div class="formbox">
-			<h3>aggiungi un utente</h3>
+			<h3>aggiungi un corso</h3>
 
 			<div>
 				<form action="CourseServlet" method="POST">

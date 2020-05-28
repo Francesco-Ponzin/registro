@@ -181,8 +181,7 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
 					<div><label for="name">Nome corso:</label><input type="text" name="name"></div>
 					<div><label for="CFU">Crediti formativi:</label><input type="number" name="CFU" max="30" min="1"
 							value="5"></div>
-					<div><label for="description">Descrizione:</label>
-						<textarea name="description"></textarea>
+					<div><label for="description">Descrizione:</label><textarea name="description"></textarea>
 					</div>
 					<label for="teacher">Docente:</label><select name="teacher">
 						<%	for (User u : teachers) {	%>
@@ -241,7 +240,7 @@ String errorMessage = session.getAttribute("error") == null ? null : session.get
 						%>
 							<form action="VoteServlet" method="POST">
 								<input type="hidden" name="action" value="assign">
-								<input type="number" name="assigned" value="18">
+								<input type="number" name="assigned" value="18" max="30" min ="1">
 								<input type="hidden" name="vote" value="<%=v.getId()%>">
 								<input type="submit" value="Assegna">
 							</form>

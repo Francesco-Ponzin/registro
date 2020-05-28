@@ -1,6 +1,6 @@
 CREATE TABLE users (
     ID int PRIMARY KEY AUTO_INCREMENT,
-    email varchar(255) UNIQUE,
+    email varchar(255) UNIQUE NOT NULL,
     firstname varchar(255),
     lastname varchar(255),
     passwordhash varchar(255) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE users (
 
 CREATE TABLE courses (
     ID int PRIMARY KEY AUTO_INCREMENT,
-    name varchar(255) UNIQUE,
+    name varchar(255) UNIQUE NOT NULL,
     description text,
     CFU int,
     teacher int NOT NULL,
@@ -38,22 +38,11 @@ CREATE TABLE votes (
 
 INSERT INTO users (email, firstname, lastname, passwordhash, salt, userrole)
 VALUES
-("finta@finto.finto","cambiami", "subito", "e7828842daefa995120b53a0a6b51b332ba8e57a0a9f8f59825291da68e0b0e2", "1434736222", "ADMIN")
+("admin@engim.edu","amministratore", "provvisorio", "e7828842daefa995120b53a0a6b51b332ba8e57a0a9f8f59825291da68e0b0e2", "1434736222", "ADMIN")
 ;
 
 
-INSERT INTO users (email, firstname, lastname, passwordhash, salt, userrole)
-VALUES
-("fintass@finto.finto","cambiami", "subito", "e7828842daefa995120b53a0a6b51b332ba8e57a0a9f8f59825291da68e0b0e2", "1434736222", "ADMIN"),
-("1@finto.finto","cambiami", "subito", "e7828842daefa995120b53a0a6b51b332ba8e57a0a9f8f59825291da68e0b0e2", "1434736222", "STUDENT"),
-("2@finto.finto","EEG", "subito", "e7828842daefa995120b53a0a6b51b332ba8e57a0a9f8f59825291da68e0b0e2", "1434736222", "TEACHER"),
-("3@finto.finto","cambiami", "subsdfsdito", "e7828842daefa995120b53a0a6b51b332ba8e57a0a9f8f59825291da68e0b0e2", "1434736222", "ADMIN")
-;
 
-
-Ogni corso, invece, è caratterizzato da un codice univoco, un nome, una breve descrizione, un
-numero di crediti (CFU) e un docente titolare.
-I voti vanno da 1 a 30 e possono trovarsi in diversi stati: {ASSEGNATO, ACCETTATO, RIFIUTATO}.
 -- password
 -- 1434736222
 -- 1434736222password

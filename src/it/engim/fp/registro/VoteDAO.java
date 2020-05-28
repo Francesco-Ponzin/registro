@@ -102,29 +102,7 @@ public class VoteDAO {
 	}
 	
 	
-	/*
-	public static void insertToDB(int course, int student) throws DAOException {
-		try {
 
-			Connection currentCon = DBconnect.getConnection();
-
-			PreparedStatement stmt = currentCon
-					.prepareStatement("INSERT INTO votes (course, student, vote, status) VALUES(?,?,?,?)");
-
-			stmt.setInt(1, course);
-			stmt.setInt(2, student);
-			stmt.setInt(3, 0);
-			stmt.setString(4, "VOID");
-
-			stmt.executeUpdate();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DAOException("Impossibile iscriversi al corso, probabile duplicato");
-
-		}
-	}
-*/
 	public static void deleteFromDb(int id) {
 		try {
 
@@ -212,7 +190,12 @@ public class VoteDAO {
 		return list;
 	}
 	
-	public static void assign(int voteId, int vote) {
+	public static void assign(int voteId, int vote) throws DAOException {
+		
+		if (vote < 1 || vote > 30) {
+			throw new DAOException("Voto non valido");
+
+		}
 		
 		try {
 
